@@ -1,11 +1,34 @@
 import unittest.mock
-from functools import lru_cache as lru
+from collections import OrderedDict
 
 
-def lru_cache(*args, **kwargs):
-   raise NotImplementedError
+def lru_cache(func=None, maxsize: int | None = None):
+    cache = OrderedDict()
+    if func is None:
 
-lru_cache = lru
+        def decorator(func):
+            def wrapper(*args, **kwargs):
+                key = args + tuple(kwargs.items())
+                result = cache.get(key)
+                if result is None:
+                    result = func(*args, **kwargs)
+                    cache[key] = result
+                    if len(cache) > maxsize:
+                        cache.popitem(last=False)
+                return result
+
+            return wrapper
+
+        return decorator
+    else:
+
+        def wrapper(*args, **kwargs):
+            value = cache.setdefault(
+                args + tuple(kwargs.items()), func(*args, **kwargs)
+            )
+            return value
+
+        return wrapper
 
 
 @lru_cache
@@ -23,8 +46,7 @@ def multiply(a: int, b: int) -> int:
     return a * b
 
 
-if __name__ == '__main__':
-    
+if __name__ == "__main__":
     assert sum(1, 2) == 3
     assert sum(3, 4) == 7
 
@@ -45,4 +67,3 @@ if __name__ == '__main__':
     assert decorated(5, 6) == 3
     assert decorated(1, 2) == 4
     assert mocked_func.call_count == 4
-
