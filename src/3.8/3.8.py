@@ -21,7 +21,7 @@ async def fetch_urls(urls: list[str], file_path: str):
                         result = {"url": url, "status_code": response.status}
                 except aiohttp.ClientConnectorError:
                     result = {"url": url, "status_code": 0}
-                except aiohttp.ClientTimeout:
+                except asyncio.TimeoutError:
                     result = {"url": url, "status_code": 1}
                 with open(file_path, "a") as file:
                     json.dump(result, file)

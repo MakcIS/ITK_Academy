@@ -6,7 +6,6 @@ import aiohttp
 from aiohttp.client_exceptions import (
     ClientConnectionError,
     ClientError,
-    ServerTimeoutError,
 )
 
 semaphore = asyncio.Semaphore(5)
@@ -21,7 +20,7 @@ async def fetch_url(session: aiohttp.ClientSession, url: str):
                     return {url: result}
                 else:
                     return {url: None}
-        except (ClientError, ClientConnectionError, ServerTimeoutError):
+        except (ClientError, ClientConnectionError, asyncio.TimeoutError):
             return {url: None}
 
 
