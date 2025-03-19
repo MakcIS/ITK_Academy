@@ -23,10 +23,12 @@ def lru_cache(func=None, maxsize: int | None = None):
     else:
 
         def wrapper(*args, **kwargs):
-            value = cache.setdefault(
-                args + tuple(kwargs.items()), func(*args, **kwargs)
-            )
-            return value
+            key = args + tuple(kwargs)
+            result = cache.get(key)
+            if result is None:
+                result = func(*args, **kwargs)
+                cache[key] = result
+            return result
 
         return wrapper
 
