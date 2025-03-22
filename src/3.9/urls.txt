@@ -1,0 +1,9 @@
+https://httpbin.org/delay/5
+https://jsonplaceholder.typicode.com/todos/1
+https://randomuser.me/api/
+https://dog.ceo/api/breeds/image/random
+https://catfact.ninja/fact
+https://api.exchangerate-api.com/v4/latest/USD
+https://www.boredapi.com/api/activity/
+https://api.agify.io?name=michael
+http://universities.hipolabs.com/search?country=United+States
