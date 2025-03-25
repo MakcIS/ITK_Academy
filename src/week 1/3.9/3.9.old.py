@@ -14,12 +14,18 @@ async def fetch_url(session: aiohttp.ClientSession, url: str):
     try:
         async with session.get(url) as responce:
             if responce.status == 200:
-                result = await responce.json()
-                return {url: result}
+                jsn = await responce.text()
+                result = await asyncio.to_thread(json.loads, jsn)
+                return {"url": url, "result": result}
             else:
-                return {url: None}
-    except (ClientError, ClientConnectionError, asyncio.TimeoutError):
-        return {url: None}
+                return {"url": url, "result": None}
+    except (
+        ClientError,
+        ClientConnectionError,
+        asyncio.TimeoutError,
+        json.JSONDecodeError,
+    ):
+        return {"url": url, "result": None}
 
 
 async def producer(queue: asyncio.Queue, path: str):
@@ -34,9 +40,10 @@ async def worker(queue: asyncio.Queue, session: aiohttp.ClientSession):
         url = await queue.get()
         result = await fetch_url(session, url)
 
-        if result[url] is not None:
+        if result["result"] is not None:
             with open(os.path.dirname(__file__) + "/result.jsonl", "a") as result_file:
-                json.dump(result, result_file)
+                json.dump(result, result_file, ensure_ascii=False)
+                result_file.write("\n")
         queue.task_done()
 
 
