@@ -1,11 +1,6 @@
-import matplotlib.pyplot as plt
+import time
+from datetime import timedelta
 
-x = ["a", "b", "c"]
-y = [1, 2, 3]
+print(str(time.time()))
 
-plt.bar(x, y, label="sdsd")
-
-plt.title("Example")
-plt.xlabel("x")
-plt.ylabel("y")
-plt.savefig("grafik.png")
+print(timedelta(milliseconds=456564))
